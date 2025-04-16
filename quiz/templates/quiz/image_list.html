@@ -1,0 +1,25 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>学习图片库</h2>
+    <a href="{% url 'quiz:upload_image' %}" class="btn btn-primary mb-3">上传新图片</a>
+    
+    <div class="row">
+        {% for image in images %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ image.image.url }}" class="card-img-top" alt="{{ image.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ image.title }}</h5>
+                    {% if image.description %}
+                    <p class="card-text">{{ image.description }}</p>
+                    {% endif %}
+                    <p class="card-text"><small class="text-muted">{{ image.upload_date|date:"Y-m-d H:i" }}</small></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

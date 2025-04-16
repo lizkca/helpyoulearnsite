@@ -1,0 +1,34 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>欢迎来到英语学习测验</h1>
+    
+    {% if random_image %}
+    <div class="card mt-4" style="max-width: 500px; margin: 0 auto;">
+        <div style="height: 300px; overflow: hidden;">
+            <img src="{{ random_image.image.url }}" class="card-img-top" alt="{{ random_image.title }}" 
+                 style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ random_image.title }}</h5>
+            {% if random_image.description %}
+            <p class="card-text">{{ random_image.description }}</p>
+            {% endif %}
+            <p class="card-text"><small class="text-muted">上传时间：{{ random_image.upload_date|date:"Y-m-d H:i" }}</small></p>
+            
+            <form method="post" action="{% url 'quiz:save_description' random_image.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="description" class="form-label">添加你的描述：</label>
+                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">保存描述</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p class="mt-4">暂无图片</p>
+    {% endif %}
+</div>
+{% endblock %}
