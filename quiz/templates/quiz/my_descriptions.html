@@ -1,0 +1,29 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">我的描述历史</h2>
+    
+    {% if descriptions %}
+        <div class="row">
+        {% for desc in descriptions %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div style="height: 200px; overflow: hidden;">
+                        <img src="{{ desc.image.image.url }}" class="card-img-top" alt="{{ desc.image.title }}"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ desc.image.title }}</h5>
+                        <p class="card-text">{{ desc.description }}</p>
+                        <p class="card-text"><small class="text-muted">创建时间：{{ desc.created_at|date:"Y-m-d H:i" }}</small></p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p>你还没有添加任何描述。</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,34 +1,21 @@
 {% extends 'quiz/base.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="container">
-    <h1>欢迎来到英语学习测验</h1>
+    <h1 class="text-center mb-5">{% trans "English Learning Quiz" %}</h1>
     
-    {% if random_image %}
-    <div class="card mt-4" style="max-width: 500px; margin: 0 auto;">
-        <div style="height: 300px; overflow: hidden;">
-            <img src="{{ random_image.image.url }}" class="card-img-top" alt="{{ random_image.title }}" 
-                 style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">{{ random_image.title }}</h5>
-            {% if random_image.description %}
-            <p class="card-text">{{ random_image.description }}</p>
-            {% endif %}
-            <p class="card-text"><small class="text-muted">上传时间：{{ random_image.upload_date|date:"Y-m-d H:i" }}</small></p>
-            
-            <form method="post" action="{% url 'quiz:save_description' random_image.id %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="description" class="form-label">添加你的描述：</label>
-                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">保存描述</button>
-            </form>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="d-grid gap-3">
+                <a href="{% url 'quiz:learn_with_images' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-images me-2"></i>{% trans "Learn with Images" %}
+                </a>
+                <a href="{% url 'quiz:practice_pronunciation' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-microphone me-2"></i>{% trans "Practice Pronunciation" %}
+                </a>
+            </div>
         </div>
     </div>
-    {% else %}
-    <p class="mt-4">暂无图片</p>
-    {% endif %}
 </div>
 {% endblock %}

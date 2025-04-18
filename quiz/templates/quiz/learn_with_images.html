@@ -1,0 +1,27 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">用图片学习英语</h2>
+    
+    {% if random_image %}
+    <div class="card mt-4" style="max-width: 500px; margin: 0 auto;">
+        <div style="height: 300px; overflow: hidden;">
+            <img src="{{ random_image.image.url }}" class="card-img-top" alt="{{ random_image.title }}" 
+                 style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ random_image.title }}</h5>
+            {% if random_image.description %}
+            <p class="card-text">{{ random_image.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'quiz:learn_with_images' %}" class="btn btn-primary">下一张图片</a>
+    </div>
+    {% else %}
+    <p class="mt-4">暂无图片</p>
+    {% endif %}
+</div>
+{% endblock %}

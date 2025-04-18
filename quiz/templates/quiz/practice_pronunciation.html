@@ -1,0 +1,44 @@
+{% extends 'quiz/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">{% trans "Practice Pronunciation" %}</h2>
+    
+    {% if words %}
+    <div class="row">
+        {% for word in words %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">{{ word.word }}</h3>
+                    <p class="card-text">{{ word.meaning }}</p>
+                    {% if word.example %}
+                    <p class="card-text"><small class="text-muted">{{ word.example }}</small></p>
+                    {% endif %}
+                    <button class="btn btn-outline-primary btn-sm" onclick="speak('{{ word.word }}')">
+                        {% trans "Play Pronunciation" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'quiz:practice_pronunciation' %}" class="btn btn-primary">
+            {% trans "Get New Words" %}
+        </a>
+    </div>
+    {% else %}
+    <p>{% trans "No words available" %}</p>
+    {% endif %}
+</div>
+
+<script>
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    window.speechSynthesis.speak(utterance);
+}
+</script>
+{% endblock %}
