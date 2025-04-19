@@ -16,9 +16,25 @@
                     {% if word.example %}
                     <p class="card-text"><small class="text-muted">{{ word.example }}</small></p>
                     {% endif %}
-                    <button class="btn btn-outline-primary btn-sm" onclick="speak('{{ word.word }}')">
-                        {% trans "Play Pronunciation" %}
-                    </button>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="speak('{{ word.word }}')">
+                            {% trans "Play Pronunciation" %}
+                        </button>
+                        <button class="btn btn-outline-success btn-sm record-button" data-word="{{ word.word }}">
+                            {% trans "Start Recording" %}
+                        </button>
+                        <div class="recording-status text-center mt-2 d-none">
+                            <div class="spinner-grow text-danger" role="status">
+                                <span class="visually-hidden">Recording...</span>
+                            </div>
+                            <div class="timer mt-1">0s</div>
+                        </div>
+                        <div class="score-display mt-2 d-none">
+                            <div class="alert alert-info">
+                                {% trans "Pronunciation Score" %}: <span class="score">0</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -40,5 +56,90 @@ function speak(text) {
     utterance.lang = 'en-US';
     window.speechSynthesis.speak(utterance);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.record-button');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const word = this.dataset.word;
+            const statusDiv = this.nextElementSibling;
+            const timerDiv = statusDiv.querySelector('.timer');
+            const scoreDiv = statusDiv.nextElementSibling;
+            let startTime;
+            let timerInterval;
+            
+            try {
+                if (this.textContent.trim() === '{% trans "Start Recording" %}') {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const mediaRecorder = new MediaRecorder(stream);
+                    const audioChunks = [];
+                    
+                    // 显示录音状态和开始计时
+                    statusDiv.classList.remove('d-none');
+                    scoreDiv.classList.add('d-none');
+                    this.textContent = '{% trans "Stop Recording" %}';
+                    this.classList.remove('btn-outline-success');
+                    this.classList.add('btn-outline-danger');
+                    
+                    startTime = Date.now();
+                    timerInterval = setInterval(() => {
+                        const seconds = Math.floor((Date.now() - startTime) / 1000);
+                        timerDiv.textContent = `${seconds}s`;
+                    }, 1000);
+                    
+                    mediaRecorder.addEventListener('dataavailable', event => {
+                        audioChunks.push(event.data);
+                    });
+                    
+                    mediaRecorder.addEventListener('stop', () => {
+                        clearInterval(timerInterval);
+                        const audioBlob = new Blob(audioChunks);
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audio = new Audio(audioUrl);
+                        audio.play();
+                        
+                        // 显示模拟评分（实际项目中可以接入语音识别API进行真实评分）
+                        const score = Math.floor(Math.random() * 30) + 70; // 模拟70-100的评分
+                        scoreDiv.querySelector('.score').textContent = score;
+                        scoreDiv.classList.remove('d-none');
+                        
+                        // 重置按钮状态
+                        this.textContent = '{% trans "Start Recording" %}';
+                        this.classList.remove('btn-outline-danger');
+                        this.classList.add('btn-outline-success');
+                        statusDiv.classList.add('d-none');
+                        
+                        stream.getTracks().forEach(track => track.stop());
+                    });
+                    
+                    mediaRecorder.start();
+                    setTimeout(() => {
+                        if (mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                        }
+                    }, 5000);
+                    
+                    this.mediaRecorder = mediaRecorder;
+                    
+                } else {
+                    if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+                        clearInterval(timerInterval);
+                        this.mediaRecorder.stop();
+                    }
+                }
+            } catch (err) {
+                console.error('录音错误:', err);
+                alert('{% trans "Unable to access microphone" %}');
+                clearInterval(timerInterval);
+                statusDiv.classList.add('d-none');
+                scoreDiv.classList.add('d-none');
+                this.textContent = '{% trans "Start Recording" %}';
+                this.classList.remove('btn-outline-danger');
+                this.classList.add('btn-outline-success');
+            }
+        });
+    });
+});
 </script>
 {% endblock %}

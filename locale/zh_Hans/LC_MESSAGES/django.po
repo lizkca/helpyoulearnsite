@@ -64,3 +64,18 @@ msgstr "换一批单词"
 
 msgid "No words available"
 msgstr "暂无单词"
+
+msgid "Start Recording"
+msgstr "开始录音"
+
+msgid "Stop Recording"
+msgstr "停止录音"
+
+msgid "Your browser does not support recording"
+msgstr "您的浏览器不支持录音功能"
+
+msgid "Unable to access microphone"
+msgstr "无法访问麦克风"
+
+msgid "Pronunciation Score"
+msgstr "发音评分"
