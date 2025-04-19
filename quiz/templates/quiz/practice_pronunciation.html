@@ -17,7 +17,7 @@
                     <p class="card-text"><small class="text-muted">{{ word.example }}</small></p>
                     {% endif %}
                     <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary btn-sm" onclick="speak('{{ word.word }}')">
+                        <button class="btn btn-outline-primary btn-sm" onclick="speak('{{ word.word }}', '{{ word.language }}')">
                             {% trans "Play Pronunciation" %}
                         </button>
                         <button class="btn btn-outline-success btn-sm record-button" data-word="{{ word.word }}">
@@ -51,9 +51,9 @@
 </div>
 
 <script>
-function speak(text) {
+function speak(text, language) {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
+    utterance.lang = language === 'zh' ? 'zh-CN' : 'en-US';
     window.speechSynthesis.speak(utterance);
 }
 

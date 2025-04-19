@@ -25,16 +25,23 @@ class ImageDescription(models.Model):
 
 
 class Word(models.Model):
-    word = models.CharField(max_length=100, unique=True, verbose_name='单词')
+    LANGUAGE_CHOICES = [
+        ('en', '英文'),
+        ('zh', '中文'),
+    ]
+    
+    word = models.CharField(max_length=100, verbose_name='词汇')
+    language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='en', verbose_name='语言')
     meaning = models.CharField(max_length=255, verbose_name='含义')
     example = models.TextField(blank=True, verbose_name='例句')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
-        verbose_name = '单词'
-        verbose_name_plural = '单词'
-        ordering = ['word']
+        verbose_name = '词汇'
+        verbose_name_plural = '词汇'
+        ordering = ['language', 'word']
+        unique_together = ['word', 'language']  # 同一语言下词汇不能重复
 
     def __str__(self):
-        return self.word
+        return f"{self.get_language_display()}: {self.word}"
